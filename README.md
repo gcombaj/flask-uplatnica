@@ -6,6 +6,13 @@ Flask wrapper around existing generator available on
 
 
 In dev env run inside virtual environment
-use flask command to run it for reloading
-export FLASK_APP=uplatnica.pz
+
+Use flask command to run it with reload code on save
+
+## Howto
+
+export FLASK_APP=uplatnica.py
+
 export FLASK_ENV=development
+
+flask run

@@ -9,7 +9,7 @@ from flask import request
 from flask import send_file
 from io import BytesIO
 
-
+import os
 
 
 app = Flask(__name__)
@@ -68,8 +68,10 @@ def kreiraj_uplatnicu(podaci):
             value = value.replace(k, u') show /%s glyphshow (' % v)
 
         return value
+    
+    currentDir = os.path.dirname(os.path.abspath(__file__))
 
-    jinja = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath="./"))
+    jinja = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=currentDir + '/templates'))
     jinja.filters['sredi_znakove'] = sredi_znakove
 
     template = jinja.get_template("uplatnica.tpl")
