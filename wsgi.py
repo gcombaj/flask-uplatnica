@@ -1,4 +1,4 @@
-from uplatnica import app
+from Flaskr.uplatnica import app
 
 if __name__ == "__main__":
     app.run()

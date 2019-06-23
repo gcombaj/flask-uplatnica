@@ -44,27 +44,27 @@ def index():
 def download_pdf():
     
     if request.is_json:
-        uplatnica = kreiraj_uplatnicu(json.dumps(request.json))
-        byte_io = BytesIO(uplatnica)
+        paymentSlip = generate_payment_slip(json.dumps(request.json))
+        byte_io = BytesIO(paymentSlip)
         return send_file(byte_io, mimetype='application/pdf')
 
     return 'error'
 
 
-def kreiraj_uplatnicu(podaci):
+def generate_payment_slip(jsonInput):
     """
-    Prima podatke u JSON formatu i vraća sadržaj PDF datoteke
+    Receives data in JSON and returns a PDF file
     """
-    podaci = json.loads(podaci)
+    data = json.loads(jsonInput)
 
-    def sredi_znakove(value):
-        rjecnik = {u'š': u'scaron', u'Š': u'Scaron',
+    def characterCleanup(value):
+        characters = {u'š': u'scaron', u'Š': u'Scaron',
                    u'ž': u'zcaron', u'Ž': u'Zcaron',
                    u'đ': u'dcroat', u'Đ': u'Dcroat',
                    u'ć': u'cacute', u'Ć': u'Cacute',
                    u'č': u'ccaron', u'Č': u'Ccaron'}
 
-        for k, v in rjecnik.items():
+        for k, v in characters.items():
             value = value.replace(k, u') show /%s glyphshow (' % v)
 
         return value
@@ -72,20 +72,20 @@ def kreiraj_uplatnicu(podaci):
     currentDir = os.path.dirname(os.path.abspath(__file__))
 
     jinja = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=currentDir + '/templates'))
-    jinja.filters['sredi_znakove'] = sredi_znakove
+    jinja.filters['characterCleanup'] = characterCleanup
 
-    template = jinja.get_template("uplatnica.tpl")
+    template = jinja.get_template("paymentSlip.tpl")
 
-    podaci['opis'] = map(sredi_znakove, textwrap.wrap(podaci['opis_placanja'], 28))
-    podaci['textwrap'] = textwrap
+    data['opis'] = map(characterCleanup, textwrap.wrap(data['opis_placanja'], 28))
+    data['textwrap'] = textwrap
 
     gs = subprocess.Popen(['gs', '-sOutputFile=-', '-sDEVICE=pdfwrite',
                            '-dPDFSETTINGS=/prepress', '-dHaveTrueTypes=true',
                            '-dEmbedAllFonts=true', '-dSubsetFonts=true', '-'],
                            stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
-    izlaz, greska = gs.communicate(template.render(podaci).encode('utf-8'))
-    return izlaz
+    output, error = gs.communicate(template.render(data).encode('utf-8'))
+    return output
 
 
 if __name__ == "__main__":

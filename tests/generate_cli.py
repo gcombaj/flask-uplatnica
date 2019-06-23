@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*
+import os
 import sys
-sys.path.append('..')
 
-from uplatnica import *
+sys.path.append('.')
+
+from Flaskr.paymentSlip import *
 
 ####################### TEST ##############################
 
-testni_podaci = """
+demo_data = """
                 {
                 "poziv_na_broj_platitelja": "",
                 "poziv_na_broj_primatelja": "12345-212-2",
@@ -19,7 +21,7 @@ testni_podaci = """
                 "datum_izvrsenja": "10022016",
                 "valuta_placanja": "HRK",
                 "hitno": "",
-                "ime_i_prezime_platitelja": "Pero Perić",
+                "ime_i_prezime_platitelja": "CLI - Pero Perić",
                 "ulica_i_broj_platitelja": "Ilica 1",
                 "postanski_i_grad_platitelja": "10000 Zagreb",
                 "naziv_primatelja": "Sklonište za nezbrinute životinje",
@@ -28,6 +30,6 @@ testni_podaci = """
                 "opis_placanja": "Novčani prilog za pomoć nezbrinutim životinjama."}
                 """
 
-uplatnica = kreiraj_uplatnicu(testni_podaci)
+paymentSlip = generate_payment_slip(demo_data)
 
-open('demo_uplatnica.pdf', 'wb').write(uplatnica)
+open('demo_paymentSlip.pdf', 'wb').write(paymentSlip)

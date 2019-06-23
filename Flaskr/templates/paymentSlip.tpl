@@ -3971,7 +3971,7 @@ setfont
   {% endif %}
 
   {% for linija in textwrap.wrap(polje, 22) %}
-    currentpoint pop ({{ linija | sredi_znakove }}) show
+    currentpoint pop ({{ linija | characterCleanup }}) show
     currentpoint pop sub -11.67 rmoveto
   {% endfor %}
 {% endfor %}
